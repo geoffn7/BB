@@ -1,4 +1,6 @@
 import random
+import numpy
+from PIL import Image
 
 class Cell:
     def __init__(self):
@@ -50,13 +52,12 @@ def neighbours_on(present_grid, row, col):
 
 def iterate(present_grid):
 
-    future_grid = Grid(10)
+    future_grid = Grid(present_grid.grid_length)
 
     row = 0
     while row < len(present_grid.grid):
         col = 0
         while col < len(present_grid.grid[0]):
-
             if present_grid.grid[row][col].state == 0:
                 #a cell turns on if it was off but had exactly two neighbours that were on
                 num_on = neighbours_on(present_grid, row, col)
@@ -68,26 +69,50 @@ def iterate(present_grid):
             else:
                 #Cells that were in the dying state go into the off state
                 future_grid.grid[row][col].state = 0
-
             col+=1
         row+=1
     return future_grid
 
+def convertToImage(grid, grid_length):
+    array = numpy.zeros([grid_length, grid_length, 3], dtype=numpy.uint8)
+    row = 0
+    while row < len(array):
+        col = 0
+        while col < len(array):
+            cell_val = grid[row][col].state
+            if cell_val == 0:
+                #cell dead
+                array[row][col] = [0, 0, 0] #black
+            elif cell_val == 1:
+                #cell live
+                array[row][col] = [203, 235, 255] #light blue
+            else:
+                #cell dying
+                array[row][col] = [57, 176, 255] #blue
+            col+=1
+        row+=1
+    return array
+
 def test():
-    testGrid = Grid(10)
+    grid_length = 200
+    testGrid = Grid(grid_length)
 
     for x in testGrid.grid:
         grid_string = ""
         for y in x:
             grid_string+= str(y.state) + " "
-        print(grid_string)
 
     iteratedGrid = iterate(testGrid)
     for x in iteratedGrid.grid:
         grid_string = ""
         for y in x:
             grid_string += str(y.state) + " "
-        print(grid_string)
+
+    present_img = Image.fromarray(convertToImage(testGrid.grid, grid_length))
+    future_img = Image.fromarray(convertToImage(iteratedGrid.grid, grid_length))
+
+    present_img.save('1.png')
+    future_img.save('2.png')
 
 if __name__ == "__main__":
     test()

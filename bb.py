@@ -6,7 +6,9 @@ class Cell:
         #on = 1
         #dying = 2
         # TODO: Need to set up states of cells that encourage ripple effect, random is hit or miss
-        self.state = random.randint(0, 2)
+        #self.state = random.randint(0, 2)
+        #Test - set value of all cells
+        self.state = 1
 
 class Grid:
     def __init__(self, grid_length):
@@ -40,23 +42,27 @@ def neighbours_on(present_grid, row, col):
 
 def iterate(present_grid):
 
-    future_grid = present_grid
+    future_grid = Grid(10)
 
     row = 0
     col = 0
     while row < len(present_grid.grid):
         while col < len(present_grid.grid[0]):
 
+            print("Cell Value: "+ str(present_grid.grid[row][col].state))
             if present_grid.grid[row][col].state == 0:
+                print("cell is off")
                 #a cell turns on if it was off but had exactly two neighbours that were on
                 num_on = neighbours_on(present_grid, row, col)
                 if num_on == 2:
                     future_grid.grid[row][col].state = 1
 
             elif present_grid.grid[row][col].state == 1:
+                print("cell is on")
                 #All cells that were "on" go into the "dying" state
                 future_grid.grid[row][col].state = 2
             else:
+                print("cell is dying")
                 #Cells that were in the dying state go into the off state
                 future_grid.grid[row][col].state = 0
 
@@ -70,14 +76,14 @@ def test():
     for x in testGrid.grid:
         grid_string = ""
         for y in x:
-            grid_string+= str(y.state) + ", "
+            grid_string+= str(y.state) + " "
         print(grid_string)
 
     iteratedGrid = iterate(testGrid)
     for x in iteratedGrid.grid:
         grid_string = ""
         for y in x:
-            grid_string += str(y.state) + ", "
+            grid_string += str(y.state) + " "
         print(grid_string)
 
 if __name__ == "__main__":

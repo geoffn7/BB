@@ -1,2 +1,2 @@
 # BB
-Implementing Brian's Brain (cellular automation)
+Implementation of Brian's Brain (cellular automation)

@@ -5,10 +5,7 @@ class Cell:
         #off = 0
         #on = 1
         #dying = 2
-        # TODO: Need to set up states of cells that encourage ripple effect, random is hit or miss
-        #self.state = random.randint(0, 2)
-        #Test - set value of all cells
-        self.state = 1
+        self.state = random.randint(0, 2)
 
 class Grid:
     def __init__(self, grid_length):
@@ -17,8 +14,19 @@ class Grid:
         self.grid = self.setup(grid_length)
 
     def setup(self, grid_length):
-        #TODO: Each cell needs to be unique
-        grid = [[Cell()]*grid_length]*grid_length
+
+        # TODO: Need to set up states of cells that encourage ripple effect, random is hit or miss 
+        row = 0
+        grid = []
+        while row < grid_length:
+            grid_row = []
+            col = 0
+            while col < grid_length:
+                grid_row.append(Cell())
+                col+=1
+            grid.append(grid_row)
+            row+=1
+        
         return grid
 
 def neighbours_on(present_grid, row, col):
@@ -45,24 +53,19 @@ def iterate(present_grid):
     future_grid = Grid(10)
 
     row = 0
-    col = 0
     while row < len(present_grid.grid):
+        col = 0
         while col < len(present_grid.grid[0]):
 
-            print("Cell Value: "+ str(present_grid.grid[row][col].state))
             if present_grid.grid[row][col].state == 0:
-                print("cell is off")
                 #a cell turns on if it was off but had exactly two neighbours that were on
                 num_on = neighbours_on(present_grid, row, col)
                 if num_on == 2:
                     future_grid.grid[row][col].state = 1
-
             elif present_grid.grid[row][col].state == 1:
-                print("cell is on")
                 #All cells that were "on" go into the "dying" state
                 future_grid.grid[row][col].state = 2
             else:
-                print("cell is dying")
                 #Cells that were in the dying state go into the off state
                 future_grid.grid[row][col].state = 0
 

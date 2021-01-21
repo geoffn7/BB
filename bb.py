@@ -3,11 +3,16 @@ import numpy
 from PIL import Image
 
 class Cell:
+
+    population = [0, 1, 2]
+    weights = [0.99, 0.008, 0.002]
+
     def __init__(self):
         #off = 0
         #on = 1
         #dying = 2
-        self.state = random.randint(0, 2)
+
+        self.state = random.choices(self.population, self.weights)[0]
 
 class Grid:
     def __init__(self, grid_length):

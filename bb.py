@@ -66,7 +66,6 @@ def neighbours_on(present_grid, row, col):
 def iterate(present_grid):
 
     future_grid = Grid(present_grid.grid_length)
-
     row = 0
     while row < len(present_grid.grid):
         col = 0
@@ -103,7 +102,7 @@ def convertToImage(grid, grid_length):
                 array[row][col] = [255, 255, 255] #white
             else:
                 #cell dying
-                array[row][col] = [57, 176, 255] #blue
+                array[row][col] = [0, 85, 255] #blue
             col+=1
         row+=1
     return array
@@ -111,26 +110,23 @@ def convertToImage(grid, grid_length):
 def test():
     grid_length = 300
     
-
-
-    #TODO Set up initial state to induce ripple effect, random sometimes causes a stalemate
     filenames = []
-    testGrid = Grid(grid_length)
+    current_grid = Grid(grid_length)
+
+    image_count = 0
+    max_num_images = 401
     
-    present_img = Image.fromarray(convertToImage(testGrid.grid, grid_length))
-    filenames.append('images/0.png')
-    present_img.save('images/0.png')
-    
-    image_count = 1
-    max_num_images = 20
-    
-    while image_count < max_num_images:
-        iteratedGrid = iterate(testGrid)
-        future_img = Image.fromarray(convertToImage(iteratedGrid.grid, grid_length))
+    while True:
+        img = Image.fromarray(convertToImage(current_grid.grid, grid_length))
         filename = 'images/' + str(image_count) + '.png'
         filenames.append(filename)
-        future_img.save(filename)
+        img.save(filename)
         image_count+=1
+
+        if image_count < max_num_images:
+            current_grid = iterate(current_grid)
+        else:
+            break
 
     with imageio.get_writer('gif/bb_sim.gif', mode='I') as writer:
         for filename in filenames:

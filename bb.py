@@ -5,7 +5,7 @@ from PIL import Image
 class Cell:
 
     population = [0, 1, 2]
-    weights = [0.99, 0.008, 0.002]
+    weights = [0.95, 0.04, 0.01]
 
     def __init__(self):
         #off = 0
@@ -22,7 +22,6 @@ class Grid:
 
     def setup(self, grid_length):
 
-        # TODO: Need to set up states of cells that encourage ripple effect, random is hit or miss 
         row = 0
         grid = []
         while row < grid_length:
@@ -68,6 +67,8 @@ def iterate(present_grid):
                 num_on = neighbours_on(present_grid, row, col)
                 if num_on == 2:
                     future_grid.grid[row][col].state = 1
+                else:
+                    future_grid.grid[row][col].state = 0
             elif present_grid.grid[row][col].state == 1:
                 #All cells that were "on" go into the "dying" state
                 future_grid.grid[row][col].state = 2
@@ -100,24 +101,19 @@ def convertToImage(grid, grid_length):
 
 def test():
     grid_length = 200
+    
+    #TODO Set up initial state to induce ripple effect, random sometimes causes a stalemate
     testGrid = Grid(grid_length)
-
-    for x in testGrid.grid:
-        grid_string = ""
-        for y in x:
-            grid_string+= str(y.state) + " "
-
-    iteratedGrid = iterate(testGrid)
-    for x in iteratedGrid.grid:
-        grid_string = ""
-        for y in x:
-            grid_string += str(y.state) + " "
-
     present_img = Image.fromarray(convertToImage(testGrid.grid, grid_length))
-    future_img = Image.fromarray(convertToImage(iteratedGrid.grid, grid_length))
-
-    present_img.save('1.png')
-    future_img.save('2.png')
+    present_img.save('0.png')
+    
+    image_count = 1
+    max_num_images = 20
+    while image_count < max_num_images:
+        iteratedGrid = iterate(testGrid)
+        future_img = Image.fromarray(convertToImage(iteratedGrid.grid, grid_length))
+        future_img.save(str(image_count) + '.png')
+        image_count+=1
 
 if __name__ == "__main__":
     test()

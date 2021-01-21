@@ -1,6 +1,7 @@
 import random
 import numpy
 from PIL import Image
+import imageio
 
 class Cell:
 
@@ -103,17 +104,27 @@ def test():
     grid_length = 200
     
     #TODO Set up initial state to induce ripple effect, random sometimes causes a stalemate
+    filenames = []
     testGrid = Grid(grid_length)
     present_img = Image.fromarray(convertToImage(testGrid.grid, grid_length))
-    present_img.save('0.png')
+    filenames.append('images/0.png')
+    present_img.save('images/0.png')
     
     image_count = 1
     max_num_images = 20
+    
     while image_count < max_num_images:
         iteratedGrid = iterate(testGrid)
         future_img = Image.fromarray(convertToImage(iteratedGrid.grid, grid_length))
-        future_img.save(str(image_count) + '.png')
+        filename = 'images/' + str(image_count) + '.png'
+        filenames.append(filename)
+        future_img.save(filename)
         image_count+=1
+
+    with imageio.get_writer('gif/bb_sim.gif', mode='I') as writer:
+        for filename in filenames:
+            image = imageio.imread(filename)
+            writer.append_data(image)
 
 if __name__ == "__main__":
     test()

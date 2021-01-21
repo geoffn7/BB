@@ -20,9 +20,13 @@ class Grid:
 
         self.grid_length = grid_length
         self.grid = self.setup(grid_length)
-
+        
     def setup(self, grid_length):
 
+        img = Image.open('initial_state.tiff')
+        img.load()
+        data = numpy.asarray( img, dtype="int32" )
+        
         row = 0
         grid = []
         while row < grid_length:
@@ -30,6 +34,10 @@ class Grid:
             col = 0
             while col < grid_length:
                 grid_row.append(Cell())
+                if data[row][col][0] == 255:
+                    grid_row[col].state = 1
+                else: 
+                    grid_row[col].state = 0
                 col+=1
             grid.append(grid_row)
             row+=1
@@ -92,7 +100,7 @@ def convertToImage(grid, grid_length):
                 array[row][col] = [0, 0, 0] #black
             elif cell_val == 1:
                 #cell live
-                array[row][col] = [203, 235, 255] #light blue
+                array[row][col] = [255, 255, 255] #white
             else:
                 #cell dying
                 array[row][col] = [57, 176, 255] #blue
@@ -100,14 +108,15 @@ def convertToImage(grid, grid_length):
         row+=1
     return array
 
-def setup_grid()
-
 def test():
     grid_length = 300
     
+
+
     #TODO Set up initial state to induce ripple effect, random sometimes causes a stalemate
     filenames = []
     testGrid = Grid(grid_length)
+    
     present_img = Image.fromarray(convertToImage(testGrid.grid, grid_length))
     filenames.append('images/0.png')
     present_img.save('images/0.png')
@@ -127,6 +136,7 @@ def test():
         for filename in filenames:
             image = imageio.imread(filename)
             writer.append_data(image)
+    
 
 if __name__ == "__main__":
     test()

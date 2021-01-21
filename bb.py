@@ -100,8 +100,10 @@ def convertToImage(grid, grid_length):
         row+=1
     return array
 
+def setup_grid()
+
 def test():
-    grid_length = 200
+    grid_length = 300
     
     #TODO Set up initial state to induce ripple effect, random sometimes causes a stalemate
     filenames = []

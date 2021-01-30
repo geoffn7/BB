@@ -20,16 +20,16 @@ class Grid:
     def __init__(self, grid_length):
 
         self.grid_length = grid_length
-        self.grid = self.setup(grid_length)
+        self.grid = self.setup()
         
-    def setup(self, grid_length):
+    def setup(self):
 
         row = 0
         grid = []
-        while row < grid_length:
+        while row < self.grid_length:
             grid_row = []
             col = 0
-            while col < grid_length:
+            while col < self.grid_length:
                 grid_row.append(Cell())
                 col+=1
             grid.append(grid_row)
@@ -83,13 +83,13 @@ def iterate(present_grid):
         row+=1
     return future_grid
 
-def convertToImage(grid, grid_length):
-    array = numpy.zeros([grid_length, grid_length, 3], dtype=numpy.uint8)
+def convertToImage(grid):
+    array = numpy.zeros([grid.grid_length, grid.grid_length, 3], dtype=numpy.uint8)
     row = 0
     while row < len(array):
         col = 0
         while col < len(array):
-            cell_val = grid[row][col].state
+            cell_val = grid.grid[row][col].state
             if cell_val == 0: #cell dead
                 array[row][col] = [0, 0, 0] #set block to black
             elif cell_val == 1: #cell live
@@ -110,7 +110,7 @@ def produce_bb_gif():
     max_num_images = 1000
     
     while True:
-        img = Image.fromarray(convertToImage(current_grid.grid, grid_length))
+        img = Image.fromarray(convertToImage(current_grid))
         filename = 'images/' + str(image_count) + '.png'
         filenames.append(filename)
         img.save(filename)

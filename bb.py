@@ -2,17 +2,18 @@ import random
 import numpy
 from PIL import Image
 import imageio
+import time
+import datetime
 
 class Cell:
 
+    #off = 0
+    #on = 1
+    #dying = 2
     population = [0, 1, 2]
     weights = [0.95, 0.04, 0.01]
 
     def __init__(self):
-        #off = 0
-        #on = 1
-        #dying = 2
-
         self.state = random.choices(self.population, self.weights)[0]
 
 class Grid:
@@ -23,10 +24,6 @@ class Grid:
         
     def setup(self, grid_length):
 
-        img = Image.open('initial_state.tiff')
-        img.load()
-        data = numpy.asarray( img, dtype="int32" )
-        
         row = 0
         grid = []
         while row < grid_length:
@@ -34,21 +31,20 @@ class Grid:
             col = 0
             while col < grid_length:
                 grid_row.append(Cell())
-                if data[row][col][0] == 255:
-                    grid_row[col].state = 1
-                else: 
-                    grid_row[col].state = 0
                 col+=1
             grid.append(grid_row)
             row+=1
-        
+
         return grid
 
 def neighbours_on(present_grid, row, col):
 
+    #Determines for a given cell at [row, col] the number of neighbouring cells that are on
+
     X = present_grid.grid_length - 1
     Y = present_grid.grid_length - 1
-    neighbours = lambda x, y : [(x2, y2) for x2 in range(x-1, x+2)
+    neighbours = lambda x, y : [(x2, y2) 
+                                for x2 in range(x-1, x+2)
                                 for y2 in range(y-1, y+2)
                                 if (-1 < x <= X and
                                     -1 < y <= Y and
@@ -94,33 +90,33 @@ def convertToImage(grid, grid_length):
         col = 0
         while col < len(array):
             cell_val = grid[row][col].state
-            if cell_val == 0:
-                #cell dead
-                array[row][col] = [0, 0, 0] #black
-            elif cell_val == 1:
-                #cell live
-                array[row][col] = [255, 255, 255] #white
-            else:
-                #cell dying
-                array[row][col] = [0, 85, 255] #blue
+            if cell_val == 0: #cell dead
+                array[row][col] = [0, 0, 0] #set block to black
+            elif cell_val == 1: #cell live
+                array[row][col] = [255, 255, 255] #set block to white
+            else: #cell dying
+                array[row][col] = [0, 85, 255] #set block to blue
             col+=1
         row+=1
     return array
 
-def test():
+def produce_bb_gif():
     grid_length = 300
     
     filenames = []
     current_grid = Grid(grid_length)
 
     image_count = 0
-    max_num_images = 401
+    max_num_images = 1000
     
     while True:
         img = Image.fromarray(convertToImage(current_grid.grid, grid_length))
         filename = 'images/' + str(image_count) + '.png'
         filenames.append(filename)
         img.save(filename)
+        
+        print("["+str(datetime.datetime.now()).split(" ")[1]+"] Image "+str(image_count+1)+" created")
+        
         image_count+=1
 
         if image_count < max_num_images:
@@ -132,7 +128,13 @@ def test():
         for filename in filenames:
             image = imageio.imread(filename)
             writer.append_data(image)
-    
 
 if __name__ == "__main__":
-    test()
+    start_time = time.time()
+    produce_bb_gif()
+    end_time = time.time()
+    run_time = end_time - start_time
+
+    print("\nStart: "+datetime.datetime.fromtimestamp(start_time).strftime('%H:%M:%S'))
+    print("End: "+datetime.datetime.fromtimestamp(end_time).strftime('%H:%M:%S'))
+    print("Runtime: "+str(round(run_time, 3))+" seconds")

@@ -12,3 +12,8 @@ For each step forward in time, each cell changes states based on the following l
 
 Running the script will move the grid of cells forward in time incrementally 1000 times, creating an RGB image of the grid for each step in time.
 Once all 1000 images have been created the script will string the images together into a viewable gif showing the progression of the grid of cells.
+
+Below is an example of what Brian's Brain looks like:
+
+![](https://github.com/nougat-rey/BB/blob/master/gif/sample.gif)
+
